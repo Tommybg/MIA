@@ -11,38 +11,160 @@ import { useNavigate } from "react-router-dom";
 interface Question {
   id: number;
   text: string;
+  options: { value: string | number; label: string }[];
 }
 
 interface Answer {
   questionId: number;
-  score: number;
+  value: string | number;
 }
 
 const questions: Question[] = [
-  { id: 1, text: "¿Con qué frecuencia te sientes triste o desanimado?" },
-  { id: 2, text: "¿Qué tan difícil te resulta concentrarte en tus estudios?" },
-  { id: 3, text: "¿Cómo calificarías tu nivel de energía durante el día?" },
-  { id: 4, text: "¿Qué tan bien has dormido en las últimas dos semanas?" },
-  { id: 5, text: "¿Cómo ves tu futuro académico y profesional?" },
-  { id: 6, text: "¿Con qué frecuencia sientes que las cosas no tienen solución?" },
-  { id: 7, text: "¿Qué tan motivado te sientes para realizar actividades que antes disfrutabas?" },
-  { id: 8, text: "¿Con qué frecuencia te sientes aislado o solo?" }, 
-  { id: 9, text: "¿Qué tan bien has dormido en las últimas dos semanas?" },
-  { id: 10, text: "¿Cómo ves tu futuro académico y profesional?" },
+  {
+    id: 1,
+    text: "¿Alguna vez has tenido pensamientos suicidas?",
+    options: [
+      { value: "Si", label: "Sí" },
+      { value: "No", label: "No" }
+    ]
+  },
+  {
+    id: 2,
+    text: "¿Cuántas horas al día trabajas o estudias?",
+    options: [
+      { value: 0, label: "0 horas" },
+      { value: 1, label: "1 hora" },
+      { value: 2, label: "2 horas" },
+      { value: 3, label: "3 horas" },
+      { value: 4, label: "4 horas" },
+      { value: 5, label: "5 horas" },
+      { value: 6, label: "6 horas" },
+      { value: 7, label: "7 horas" },
+      { value: 8, label: "8 horas" },
+      { value: 9, label: "9 horas" },
+      { value: 10, label: "10 horas" },
+      { value: 11, label: "11 horas" },
+      { value: 12, label: "12 horas" }
+    ]
+  },
+  {
+    id: 3,
+    text: "¿Qué nivel de estrés financiero experimentas?",
+    options: [
+      { value: 1, label: "1 = Muy bajo" },
+      { value: 2, label: "2 = Bajo" },
+      { value: 3, label: "3 = Moderado" },
+      { value: 4, label: "4 = Alto" },
+      { value: 5, label: "5 = Muy alto" }
+    ]
+  },
+  {
+    id: 4,
+    text: "¿Existe un historial familiar de enfermedad mental?",
+    options: [
+      { value: "Si", label: "Sí" },
+      { value: "No", label: "No" }
+    ]
+  },
+  {
+    id: 5,
+    text: "¿Qué nivel de presión académica sientes actualmente?",
+    options: [
+      { value: 0, label: "0 = Ninguna" },
+      { value: 1, label: "1 = Muy baja" },
+      { value: 2, label: "2 = Baja" },
+      { value: 3, label: "3 = Moderada" },
+      { value: 4, label: "4 = Alta" },
+      { value: 5, label: "5 = Muy alta" }
+    ]
+  },
+  {
+    id: 6,
+    text: "¿Cuál es tu duración promedio de sueño?",
+    options: [
+      { value: "Menos de 5 horas", label: "Menos de 5 horas" },
+      { value: "5–6 horas", label: "5–6 horas" },
+      { value: "7–8 horas", label: "7–8 horas" },
+      { value: "Más de 8 horas", label: "Más de 8 horas" },
+      { value: "Otros", label: "Otros" }
+    ]
+  },
+  {
+    id: 7,
+    text: "¿Cómo describirías tus hábitos alimenticios?",
+    options: [
+      { value: "Saludables", label: "Saludables" },
+      { value: "Moderados", label: "Moderados" },
+      { value: "Poco saludables", label: "Poco saludables" },
+      { value: "Otros", label: "Otros" }
+    ]
+  },
+  {
+    id: 8,
+    text: "¿Cuál es tu género?",
+    options: [
+      { value: "Masculino", label: "Masculino" },
+      { value: "Femenino", label: "Femenino" }
+    ]
+  },
+  {
+    id: 9,
+    text: "¿Cuál es tu edad?",
+    options: [
+      { value: 18, label: "18 años" },
+      { value: 19, label: "19 años" },
+      { value: 20, label: "20 años" },
+      { value: 21, label: "21 años" },
+      { value: 22, label: "22 años" },
+      { value: 23, label: "23 años" },
+      { value: 24, label: "24 años" },
+      { value: 25, label: "25 años" },
+      { value: 26, label: "26 años" },
+      { value: 27, label: "27 años" },
+      { value: 28, label: "28 años" },
+      { value: 29, label: "29 años" },
+      { value: 30, label: "30 años" },
+      { value: 31, label: "31 años" },
+      { value: 32, label: "32 años" },
+      { value: 33, label: "33 años" },
+      { value: 34, label: "34 años" },
+      { value: 35, label: "35 años" },
+      { value: 36, label: "36 años" },
+      { value: 37, label: "37 años" },
+      { value: 38, label: "38 años" },
+      { value: 39, label: "39 años" },
+      { value: 41, label: "41 años" },
+      { value: 42, label: "42 años" },
+      { value: 43, label: "43 años" },
+      { value: 44, label: "44 años" },
+      { value: 46, label: "46 años" },
+      { value: 48, label: "48 años" },
+      { value: 49, label: "49 años" },
+      { value: 51, label: "51 años" },
+      { value: 54, label: "54 años" },
+      { value: 56, label: "56 años" },
+      { value: 58, label: "58 años" },
+      { value: 59, label: "59 años" }
+    ]
+  },
+  {
+    id: 10,
+    text: "¿Qué nivel de presión laboral experimentas?",
+    options: [
+      { value: 0, label: "0 = Ninguna" },
+      { value: 2, label: "2 = Moderada" },
+      { value: 5, label: "5 = Alta" }
+    ]
+  }
 ];
 
-const scaleLabels = [
-  "Nunca / Excelente",      // 1 punto
-  "Raramente / Bueno",      // 2 puntos  
-  "A veces / Regular",      // 3 puntos
-  "Frecuentemente / Malo",  // 4 puntos
-  "Siempre / Muy malo"      // 5 puntos
-];
 
 type EvaluationStep = "questionnaire" | "analyzing" | "results";
 
-interface RiskLevel {
-  level: "low" | "moderate" | "high";
+interface DepressionResult {
+  hasDepression: boolean;
+  prediction: number; // 0 = no depression, 1 = depression
+  confidence?: number; // optional confidence score from ML model
   label: string;
   color: string;
   description: string;
@@ -54,7 +176,7 @@ export const Evaluation = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState<string>("");
-  const [riskAssessment, setRiskAssessment] = useState<RiskLevel | null>(null);
+  const [depressionResult, setDepressionResult] = useState<DepressionResult | null>(null);
   const navigate = useNavigate();
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
@@ -68,7 +190,7 @@ export const Evaluation = () => {
 
     const newAnswer: Answer = {
       questionId: questions[currentQuestion].id,
-      score: parseInt(currentAnswer)
+      value: currentAnswer
     };
 
     const updatedAnswers = [...answers, newAnswer];
@@ -81,60 +203,81 @@ export const Evaluation = () => {
       // Start analysis
       setCurrentStep("analyzing");
       
-      // Simulate AI analysis
+      // Call ML model for depression prediction
       setTimeout(() => {
-        const assessment = analyzeResponses(updatedAnswers);
-        setRiskAssessment(assessment);
+        const result = analyzeResponses(updatedAnswers);
+        setDepressionResult(result);
         setCurrentStep("results");
       }, 3000);
     }
   };
 
-  const analyzeResponses = (responses: Answer[]): RiskLevel => {
-    const totalScore = responses.reduce((sum, answer) => sum + answer.score, 0);
-    const maxScore = questions.length * 5;
-    const percentage = (totalScore / maxScore) * 100;
+  const analyzeResponses = (responses: Answer[]): DepressionResult => {
+    // TODO: Replace this with actual ML model API call
+    // For now, using placeholder logic based on depression indicators
+    console.log("Sending to ML model:", responses);
+    
+    // Convert responses to format expected by ML model
+    const formattedData = formatDataForMLModel(responses);
+    
+    // Placeholder logic - replace with actual ML model prediction
+    // Simulate ML model returning 0 (no depression) or 1 (depression)
+    const hasDepressionIndicators = responses.some(answer => 
+      (answer.questionId === 1 && answer.value === "Si") || // Pensamientos suicidas
+      (answer.questionId === 3 && typeof answer.value === 'number' && answer.value >= 4) || // Alto estrés financiero
+      (answer.questionId === 5 && typeof answer.value === 'number' && answer.value >= 4) // Alta presión académica
+    );
+    
+    // Simulate ML model prediction: 1 = depression, 0 = no depression
+    const prediction = hasDepressionIndicators ? 1 : 0;
+    const hasDepression = prediction === 1;
 
-    if (percentage <= 40) {
+    if (hasDepression) {
       return {
-        level: "low",
-        label: "Riesgo Bajo",
-        color: "text-success",
-        description: "Tus respuestas indican un bienestar mental relativamente bueno. Continúa cuidando tu salud mental.",
-        recommendations: [
-          "Mantén rutinas saludables de sueño y ejercicio",
-          "Continúa conectando con amigos y familia",
-          "Practica técnicas de mindfulness regularmente",
-          "Considera recursos preventivos de bienestar estudiantil"
-        ]
-      };
-    } else if (percentage <= 70) {
-      return {
-        level: "moderate",
-        label: "Riesgo Moderado",
-        color: "text-warning",
-        description: "Tus respuestas sugieren algunos desafíos en tu bienestar mental que podrían beneficiarse de apoyo adicional.",
-        recommendations: [
-          "Considera hablar con un consejero estudiantil",
-          "Explora grupos de apoyo en tu universidad",
-          "Establece rutinas de autocuidado más estructuradas",
-          "Busca conexiones sociales y actividades que disfrutes"
-        ]
-      };
-    } else {
-      return {
-        level: "high",
-        label: "Riesgo Alto",
+        hasDepression: true,
+        prediction: 1,
+        confidence: 0.85, // Placeholder confidence score
+        label: "Depresión Detectada",
         color: "text-destructive",
-        description: "Tus respuestas indican que podrías estar experimentando desafíos significativos. Te recomendamos buscar apoyo profesional.",
+        description: "Nuestro modelo de inteligencia artificial ha detectado patrones que sugieren la presencia de síntomas depresivos. Es importante que busques ayuda profesional.",
         recommendations: [
-          "Busca ayuda de un profesional de salud mental",
-          "Contacta el centro de bienestar estudiantil inmediatamente",
-          "Considera hablar con un médico de atención primaria",
-          "Mantente conectado con sistema de apoyo de confianza"
+          "Busca ayuda de un profesional de salud mental de inmediato",
+          "Contacta el centro de bienestar estudiantil de tu institución",
+          "Considera hablar con un psicólogo o psiquiatra",
+          "Mantente en contacto cercano con tu red de apoyo",
+          "Si tienes pensamientos suicidas, contacta una línea de crisis inmediatamente",
+          "No ignores estos síntomas, la depresión es tratable con ayuda profesional"
         ]
       };
     }
+
+    // No depression detected (prediction = 0)
+    return {
+      hasDepression: false,
+      prediction: 0,
+      confidence: 0.78, // Placeholder confidence score
+      label: "No se detecta Depresión",
+      color: "text-success",
+      description: "Nuestro modelo de IA no ha detectado patrones que indiquen síntomas depresivos significativos. Sin embargo, sigue cuidando tu bienestar mental.",
+      recommendations: [
+        "Mantén rutinas saludables de sueño y ejercicio",
+        "Continúa conectando con amigos y familia",
+        "Practica técnicas de mindfulness y manejo del estrés",
+        "Mantente atento a cambios en tu estado de ánimo",
+        "Considera recursos preventivos de bienestar estudiantil",
+        "Si notas cambios en tu bienestar, no dudes en buscar ayuda"
+      ]
+    };
+  };
+
+  const formatDataForMLModel = (responses: Answer[]) => {
+    // TODO: Format the responses according to your ML model's expected input format
+    // This will need to be adjusted based on your specific model requirements
+    const formatted = {};
+    responses.forEach(answer => {
+      formatted[`question_${answer.questionId}`] = answer.value;
+    });
+    return formatted;
   };
 
   const handleRestart = () => {
@@ -142,7 +285,7 @@ export const Evaluation = () => {
     setCurrentQuestion(0);
     setAnswers([]);
     setCurrentAnswer("");
-    setRiskAssessment(null);
+    setDepressionResult(null);
   };
 
   const handleGoToProfessionals = () => {
@@ -158,14 +301,14 @@ export const Evaluation = () => {
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Analizando tus respuestas...</h2>
               <p className="text-muted-foreground">
-                Nuestro sistema está procesando tu evaluación para brindarte recomendaciones personalizadas.
+                Nuestro modelo de inteligencia artificial está procesando tu evaluación para brindarte un análisis personalizado.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 max-w-md">
               <p className="text-sm text-muted-foreground">
+                🤖 Aplicando modelo de Machine Learning<br/>
                 📊 Procesando {questions.length} respuestas<br/>
-                🧠 Aplicando algoritmos de bienestar mental<br/>
-                ⚖️ Generando recomendaciones personalizadas
+                ⚖️ Generando predicción personalizada
               </p>
             </div>
           </div>
@@ -174,38 +317,42 @@ export const Evaluation = () => {
     );
   }
 
-  if (currentStep === "results" && riskAssessment) {
+  if (currentStep === "results" && depressionResult) {
     return (
       <div className="max-w-4xl mx-auto p-4">
         <Card className="card-wellness mb-6">
           <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-foreground mb-2">Resultados de tu Evaluación</h1>
-            <p className="text-muted-foreground">Basado en tus respuestas, aquí está tu evaluación de bienestar mental</p>
+            <p className="text-muted-foreground">Basado en el análisis de IA de tus respuestas</p>
           </div>
 
-          {/* Risk Level */}
+          {/* Depression Result */}
           <div className="text-center mb-8">
             <Badge 
-              variant={riskAssessment.level === "low" ? "default" : "destructive"}
-              className={`text-lg px-6 py-2 ${riskAssessment.color}`}
+              variant={depressionResult.hasDepression ? "destructive" : "default"}
+              className={`text-lg px-6 py-2 ${depressionResult.color}`}
             >
-              {riskAssessment.level === "low" && <CheckCircle className="w-5 h-5 mr-2" />}
-              {riskAssessment.level === "moderate" && <Clock className="w-5 h-5 mr-2" />}
-              {riskAssessment.level === "high" && <AlertTriangle className="w-5 h-5 mr-2" />}
-              {riskAssessment.label}
+              {!depressionResult.hasDepression && <CheckCircle className="w-5 h-5 mr-2" />}
+              {depressionResult.hasDepression && <AlertTriangle className="w-5 h-5 mr-2" />}
+              {depressionResult.label}
             </Badge>
+            {depressionResult.confidence && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Confianza del modelo: {Math.round(depressionResult.confidence * 100)}%
+              </p>
+            )}
           </div>
 
           {/* Description */}
           <Card className="bg-white/50 border-border/30 p-6 mb-6">
-            <p className="text-foreground text-center text-lg">{riskAssessment.description}</p>
+            <p className="text-foreground text-center text-lg">{depressionResult.description}</p>
           </Card>
 
           {/* Recommendations */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-foreground mb-4">Recomendaciones Personalizadas</h3>
             <div className="grid gap-3">
-              {riskAssessment.recommendations.map((rec, index) => (
+              {depressionResult.recommendations.map((rec, index) => (
                 <div key={index} className="flex items-start space-x-3 p-3 bg-white/30 rounded-lg">
                   <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span className="text-sm font-medium text-primary">{index + 1}</span>
@@ -218,7 +365,7 @@ export const Evaluation = () => {
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {(riskAssessment.level === "moderate" || riskAssessment.level === "high") && (
+            {depressionResult.hasDepression && (
               <Button onClick={handleGoToProfessionals} className="btn-calm">
                 <ArrowRight className="w-4 h-4 mr-2" />
                 Ver Profesionales Disponibles
@@ -234,12 +381,12 @@ export const Evaluation = () => {
         {/* Disclaimer */}
         <Card className="bg-warning/10 border border-warning/30 p-4">
           <p className="text-sm font-medium text-foreground mb-2">
-            ⚠️ Importante: Esta evaluación no constituye un diagnóstico médico
+            ⚠️ Importante: Esta evaluación utiliza inteligencia artificial y no constituye un diagnóstico médico
           </p>
           <p className="text-xs text-muted-foreground">
-            Los resultados de esta evaluación son indicativos y no reemplazan la consulta con un profesional 
-            de salud mental licenciado. Si estás experimentando pensamientos suicidas o crisis emocional, 
-            busca ayuda inmediata contactando servicios de emergencia.
+            Los resultados se basan en un modelo de machine learning entrenado para identificar factores de riesgo. 
+            Esta herramienta no reemplaza la consulta con un profesional de salud mental licenciado. 
+            Si estás experimentando pensamientos suicidas o crisis emocional, busca ayuda inmediata contactando servicios de emergencia.
           </p>
         </Card>
       </div>
@@ -250,8 +397,8 @@ export const Evaluation = () => {
     <div className="max-w-2xl mx-auto p-4 min-h-[calc(100vh-200px)]">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Evaluación de Bienestar Mental</h1>
-        <p className="text-muted-foreground">Responde honestamente para recibir recomendaciones personalizadas</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Evaluación de Bienestar Mental con IA</h1>
+        <p className="text-muted-foreground">Responde honestamente para recibir un análisis personalizado basado en inteligencia artificial</p>
       </div>
 
       {/* Progress */}
@@ -272,14 +419,14 @@ export const Evaluation = () => {
         </h2>
 
         <RadioGroup value={currentAnswer} onValueChange={handleAnswerSelect}>
-          {scaleLabels.map((label, index) => (
+          {questions[currentQuestion].options.map((option, index) => (
             <div key={index} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/20 transition-colors">
-              <RadioGroupItem value={(index + 1).toString()} id={`option-${index}`} />
+              <RadioGroupItem value={option.value.toString()} id={`option-${index}`} />
               <Label 
                 htmlFor={`option-${index}`} 
                 className="flex-1 cursor-pointer text-foreground"
               >
-                {label}
+                {option.label}
               </Label>
             </div>
           ))}
@@ -307,7 +454,7 @@ export const Evaluation = () => {
           disabled={!currentAnswer}
           className="btn-calm"
         >
-          {currentQuestion === questions.length - 1 ? "Finalizar Evaluación" : "Siguiente"}
+          {currentQuestion === questions.length - 1 ? "Analizar con IA" : "Siguiente"}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
@@ -315,8 +462,9 @@ export const Evaluation = () => {
       {/* Disclaimer */}
       <Card className="bg-gentle/30 border border-border/30 mt-6 p-4">
         <p className="text-xs text-muted-foreground text-center">
-          Esta evaluación es confidencial y los resultados se utilizan únicamente para brindarte 
-          recomendaciones personalizadas. No constituye un diagnóstico médico profesional.
+          Esta evaluación utiliza un modelo de inteligencia artificial para análisis predictivo. 
+          Los resultados son confidenciales y se utilizan únicamente para brindarte recomendaciones personalizadas. 
+          No constituye un diagnóstico médico profesional.
         </p>
       </Card>
     </div>

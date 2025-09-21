@@ -1,9 +1,24 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
 import random
 from dotenv import load_dotenv
 from livekit import api
+
+# ML service import
+try:
+    from .ml_service import (
+        get_feature_requirements,
+        get_model_information,
+        predict_depression,
+    )
+except ImportError:
+    # For direct execution
+    from ml_service import (
+        get_feature_requirements,
+        get_model_information,
+        predict_depression,
+    )
 
 # Load environment variables
 load_dotenv(dotenv_path=".env.local")
@@ -49,6 +64,31 @@ def get_connection_details():
     except Exception as e:
         print(f"Error generating connection details: {e}")
         return jsonify({'error': 'Failed to generate connection details'}), 500
+
+# --- ML endpoints ---
+
+@app.route('/api/ml/features', methods=['GET'])
+def ml_features():
+    try:
+        return jsonify(get_feature_requirements()), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ml/model-info', methods=['GET'])
+def ml_model_info():
+    try:
+        return jsonify(get_model_information()), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ml/predict', methods=['POST'])
+def ml_predict():
+    try:
+        data = request.get_json(force=True)
+        result = predict_depression(data)
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')
