@@ -1,7 +1,0 @@
-[build]
-builder = "NIXPACKS"
-
-[deploy]
-startCommand = "echo 'This is a multi-service project. Please deploy each service separately.'"
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10
