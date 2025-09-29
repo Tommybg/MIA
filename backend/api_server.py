@@ -5,7 +5,7 @@ import random
 from dotenv import load_dotenv
 from livekit import api
 
-# ML service import
+# Importación del servicio de ML
 try:
     from .ml_service import (
         get_feature_requirements,
@@ -13,18 +13,18 @@ try:
         predict_depression,
     )
 except ImportError:
-    # For direct execution
+    # Para ejecución directa
     from ml_service import (
         get_feature_requirements,
         get_model_information,
         predict_depression,
     )
 
-# Load environment variables
+# Cargar variables de entorno
 load_dotenv(dotenv_path=".env.local")
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for the Vite frontend
+CORS(app)  # Habilitar CORS para el frontend de Vite
 
 @app.route('/api/connection-details', methods=['GET'])
 def get_connection_details():
@@ -65,7 +65,7 @@ def get_connection_details():
         print(f"Error generating connection details: {e}")
         return jsonify({'error': 'Failed to generate connection details'}), 500
 
-# --- ML endpoints ---
+# --- Endpoints ML ---
 
 @app.route('/api/ml/features', methods=['GET'])
 def ml_features():
