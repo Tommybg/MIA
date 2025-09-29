@@ -177,6 +177,7 @@ export const Evaluation = () => {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState<string>("");
   const [depressionResult, setDepressionResult] = useState<DepressionResult | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const navigate = useNavigate();
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
@@ -185,7 +186,7 @@ export const Evaluation = () => {
     setCurrentAnswer(value);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!currentAnswer) return;
 
     const newAnswer: Answer = {
@@ -202,82 +203,118 @@ export const Evaluation = () => {
     } else {
       // Start analysis
       setCurrentStep("analyzing");
-      
-      // Call ML model for depression prediction
-      setTimeout(() => {
-        const result = analyzeResponses(updatedAnswers);
+      setErrorMessage("");
+
+      try {
+        const result = await analyzeResponses(updatedAnswers);
         setDepressionResult(result);
         setCurrentStep("results");
-      }, 3000);
+      } catch (err: any) {
+        setErrorMessage(err?.message || "Ocurrió un error al predecir. Intenta nuevamente.");
+        setCurrentStep("questionnaire");
+      }
     }
   };
 
-  const analyzeResponses = (responses: Answer[]): DepressionResult => {
-    // TODO: Replace this with actual ML model API call
-    // For now, using placeholder logic based on depression indicators
-    console.log("Sending to ML model:", responses);
-    
-    // Convert responses to format expected by ML model
-    const formattedData = formatDataForMLModel(responses);
-    
-    // Placeholder logic - replace with actual ML model prediction
-    // Simulate ML model returning 0 (no depression) or 1 (depression)
-    const hasDepressionIndicators = responses.some(answer => 
-      (answer.questionId === 1 && answer.value === "Si") || // Pensamientos suicidas
-      (answer.questionId === 3 && typeof answer.value === 'number' && answer.value >= 4) || // Alto estrés financiero
-      (answer.questionId === 5 && typeof answer.value === 'number' && answer.value >= 4) // Alta presión académica
-    );
-    
-    // Simulate ML model prediction: 1 = depression, 0 = no depression
-    const prediction = hasDepressionIndicators ? 1 : 0;
-    const hasDepression = prediction === 1;
+  const analyzeResponses = async (responses: Answer[]): Promise<DepressionResult> => {
+    const payload = formatDataForMLModel(responses);
+    const API_BASE = (import.meta as any).env?.VITE_BACKEND_URL || "http://localhost:5001";
+    const url = `${API_BASE}/api/ml/predict`;
 
-    if (hasDepression) {
-      return {
-        hasDepression: true,
-        prediction: 1,
-        confidence: 0.85, // Placeholder confidence score
-        label: "Depresión Detectada",
-        color: "text-destructive",
-        description: "Nuestro modelo de inteligencia artificial ha detectado patrones que sugieren la presencia de síntomas depresivos. Es importante que busques ayuda profesional.",
-        recommendations: [
-          "Busca ayuda de un profesional de salud mental de inmediato",
-          "Contacta el centro de bienestar estudiantil de tu institución",
-          "Considera hablar con un psicólogo o psiquiatra",
-          "Mantente en contacto cercano con tu red de apoyo",
-          "Si tienes pensamientos suicidas, contacta una línea de crisis inmediatamente",
-          "No ignores estos síntomas, la depresión es tratable con ayuda profesional"
-        ]
-      };
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const errPayload = await res.json().catch(() => ({}));
+      throw new Error(errPayload?.error || `Error HTTP ${res.status}`);
     }
 
-    // No depression detected (prediction = 0)
+    const data = await res.json();
+    const hasDepression = Number(data?.prediction) === 1;
+    const probability: number = typeof data?.probability === "number" ? data.probability : (hasDepression ? 0.75 : 0.25);
+    const riskLevel: string = String(data?.risk_level || (hasDepression ? "High" : "Low"));
+    const riskDescription: string = String(data?.risk_description || (hasDepression
+      ? "Nuestro modelo detecta riesgo alto de depresión. Busca apoyo profesional."
+      : "Bajo riesgo detectado. Mantén hábitos saludables."));
+
+    const color = riskLevel === "High" ? "text-destructive" : (riskLevel === "Medium" ? "text-foreground" : "text-success");
+    const label = hasDepression ? "Depresión Detectada" : "No se detecta Depresión";
+
     return {
-      hasDepression: false,
-      prediction: 0,
-      confidence: 0.78, // Placeholder confidence score
-      label: "No se detecta Depresión",
-      color: "text-success",
-      description: "Nuestro modelo de IA no ha detectado patrones que indiquen síntomas depresivos significativos. Sin embargo, sigue cuidando tu bienestar mental.",
-      recommendations: [
-        "Mantén rutinas saludables de sueño y ejercicio",
-        "Continúa conectando con amigos y familia",
-        "Practica técnicas de mindfulness y manejo del estrés",
-        "Mantente atento a cambios en tu estado de ánimo",
-        "Considera recursos preventivos de bienestar estudiantil",
-        "Si notas cambios en tu bienestar, no dudes en buscar ayuda"
-      ]
+      hasDepression,
+      prediction: hasDepression ? 1 : 0,
+      confidence: probability,
+      label,
+      color,
+      description: riskDescription,
+      recommendations: hasDepression
+        ? [
+            "Busca ayuda de un profesional de salud mental de inmediato",
+            "Contacta el centro de bienestar estudiantil de tu institución",
+            "Considera hablar con un psicólogo o psiquiatra",
+            "Mantente en contacto cercano con tu red de apoyo",
+            "Si tienes pensamientos suicidas, contacta una línea de crisis inmediatamente",
+            "No ignores estos síntomas, la depresión es tratable con ayuda profesional"
+          ]
+        : [
+            "Mantén rutinas saludables de sueño y ejercicio",
+            "Continúa conectando con amigos y familia",
+            "Practica técnicas de mindfulness y manejo del estrés",
+            "Mantente atento a cambios en tu estado de ánimo",
+            "Considera recursos preventivos de bienestar estudiantil",
+            "Si notas cambios en tu bienestar, no dudes en buscar ayuda"
+          ]
     };
   };
 
   const formatDataForMLModel = (responses: Answer[]) => {
-    // TODO: Format the responses according to your ML model's expected input format
-    // This will need to be adjusted based on your specific model requirements
-    const formatted = {};
-    responses.forEach(answer => {
-      formatted[`question_${answer.questionId}`] = answer.value;
-    });
-    return formatted;
+    // Map questionnaire responses (ES) to ML model expected schema (EN)
+    const find = (id: number) => responses.find(r => r.questionId === id)?.value as string | number | undefined;
+
+    // Helpers for categorical mappings
+    const mapYesNo = (v?: string | number) => (String(v).toLowerCase() === "si" ? "Yes" : "No");
+    const mapGender = (v?: string | number) => {
+      const s = String(v).toLowerCase();
+      if (s.startsWith("fem")) return "Female";
+      return "Male";
+    };
+    const mapSleep = (v?: string | number) => {
+      const s = String(v).toLowerCase();
+      if (s.includes("menos") || s.includes("<") || s.includes("<5")) return "Less than 5 hours";
+      if (s.includes("5") && s.includes("6")) return "5-6 hours";
+      if (s.includes("7") && s.includes("8")) return "7-8 hours";
+      if (s.includes("más") || s.includes("mas") || s.includes("more")) return "More than 8 hours";
+      return "7-8 hours"; // default bucket
+    };
+    const mapDiet = (v?: string | number) => {
+      const s = String(v).toLowerCase();
+      if (s.startsWith("salud")) return "Healthy";
+      if (s.startsWith("moder")) return "Moderate";
+      if (s.includes("poco") || s.includes("no salud")) return "Unhealthy";
+      return "Moderate";
+    };
+
+    const age = Number(find(9));
+    const academic = Number(find(5));
+    const workPressure = Number(find(10));
+    const hours = Number(find(2));
+    const financial = Number(find(3));
+
+    return {
+      "Gender": mapGender(find(8)),
+      "Age": isNaN(age) ? 21 : age,
+      "Academic Pressure": isNaN(academic) ? 3 : academic,
+      "Work Pressure": isNaN(workPressure) ? 0 : workPressure,
+      "Work/Study Hours": isNaN(hours) ? 4 : hours,
+      "Financial Stress": isNaN(financial) ? 3 : financial,
+      "Sleep Duration": mapSleep(find(6)),
+      "Dietary Habits": mapDiet(find(7)),
+      "Have you ever had suicidal thoughts ?": mapYesNo(find(1)),
+      "Family History of Mental Illness": mapYesNo(find(4))
+    } as Record<string, string | number>;
   };
 
   const handleRestart = () => {
@@ -305,11 +342,6 @@ export const Evaluation = () => {
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 max-w-md">
-              <p className="text-sm text-muted-foreground">
-                🤖 Aplicando modelo de Machine Learning<br/>
-                📊 Procesando {questions.length} respuestas<br/>
-                ⚖️ Generando predicción personalizada
-              </p>
             </div>
           </div>
         </Card>
@@ -336,11 +368,6 @@ export const Evaluation = () => {
               {depressionResult.hasDepression && <AlertTriangle className="w-5 h-5 mr-2" />}
               {depressionResult.label}
             </Badge>
-            {depressionResult.confidence && (
-              <p className="text-sm text-muted-foreground mt-2">
-                Confianza del modelo: {Math.round(depressionResult.confidence * 100)}%
-              </p>
-            )}
           </div>
 
           {/* Description */}

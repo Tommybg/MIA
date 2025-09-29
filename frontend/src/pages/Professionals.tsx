@@ -322,14 +322,6 @@ export const Professionals = () => {
 
       {/* Disclaimer */}
       <Card className="bg-warning/10 border border-warning/30 p-4">
-        <p className="text-sm font-medium text-foreground mb-2">
-          ⚠️ Importante: Contenido simulado para prototipo
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Los profesionales mostrados son ejemplos para demostración. En una aplicación real, 
-          esta sección mostraría profesionales licenciados verificados. Siempre verifica las 
-          credenciales de cualquier profesional de salud mental antes de programar una consulta.
-        </p>
       </Card>
     </div>
   );
