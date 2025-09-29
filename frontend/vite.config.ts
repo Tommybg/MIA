@@ -11,12 +11,11 @@ export default defineConfig(({ mode }) => ({
   },
   preview: {
     host: "0.0.0.0",
-    port: 8080,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 4173,
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' ? componentTagger() : null,
   ].filter(Boolean),
   resolve: {
     alias: {
