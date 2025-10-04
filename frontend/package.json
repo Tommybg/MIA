@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "serve": "^14.2.1",
     "@livekit/components-react": "^2.9.14",
     "@livekit/components-styles": "^1.1.4",
     "@livekit/krisp-noise-filter": "^0.2.16",

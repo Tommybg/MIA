@@ -6,22 +6,21 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm ci --only=production
 
-# Copy all source files explicitly
+# Install serve globally
+RUN npm install -g serve
+
+# Copy source files
 COPY . .
-
-# Verify the utils.ts file exists
-RUN ls -la src/lib/ || echo "lib directory not found"
-RUN cat src/lib/utils.ts || echo "utils.ts not found"
 
 # Build the application
 RUN npm run build
 
-# Use a lightweight server for production
-RUN npm install -g serve
+# Remove source files to reduce image size
+RUN rm -rf src public node_modules/.cache
 
-EXPOSE $PORT
+EXPOSE 3000
 
 # Start the application using Railway's PORT
-CMD serve -s dist -l $PORT
+CMD ["sh", "-c", "serve -s dist -l ${PORT:-3000}"]
