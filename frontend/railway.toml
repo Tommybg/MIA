@@ -2,7 +2,8 @@
 builder = "DOCKERFILE"
 
 [deploy]
-# Command is handled by Dockerfile CMD
+# Empty startCommand to use Dockerfile CMD
+startCommand = ""
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
