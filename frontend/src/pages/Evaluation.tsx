@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle, Clock, ArrowRight, RefreshCw } from "lucide-react";
+import { AlertTriangle, CheckCircle, Clock, ArrowRight, RefreshCw, MessageCircle, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Question {
@@ -165,6 +165,7 @@ interface DepressionResult {
   hasDepression: boolean;
   prediction: number; // 0 = no depression, 1 = depression
   confidence?: number; // optional confidence score from ML model
+  riskLevel: string; // "Alto", "Medio", "Bajo"
   label: string;
   color: string;
   description: string;
@@ -235,35 +236,44 @@ export const Evaluation = () => {
     const data = await res.json();
     const hasDepression = Number(data?.prediction) === 1;
     const probability: number = typeof data?.probability === "number" ? data.probability : (hasDepression ? 0.75 : 0.25);
-    const riskLevel: string = String(data?.risk_level || (hasDepression ? "High" : "Low"));
+    const riskLevel: string = String(data?.risk_level || (hasDepression ? "Alto" : "Bajo"));
     const riskDescription: string = String(data?.risk_description || (hasDepression
       ? "Nuestro modelo detecta riesgo alto de depresión. Busca apoyo profesional."
       : "Bajo riesgo detectado. Mantén hábitos saludables."));
 
-    const color = riskLevel === "High" ? "text-destructive" : (riskLevel === "Medium" ? "text-foreground" : "text-success");
-    const label = hasDepression ? "Depresión Detectada" : "No se detecta Depresión";
+    const color = riskLevel === "Alto" ? "text-destructive" : (riskLevel === "Medio" ? "text-orange-600" : "text-green-600");
+    const label = riskLevel === "Alto" ? "Riesgo Alto" : 
+                 riskLevel === "Medio" ? "Riesgo Moderado" : 
+                 "Riesgo Bajo";
 
     return {
       hasDepression,
       prediction: hasDepression ? 1 : 0,
       confidence: probability,
+      riskLevel,
       label,
       color,
       description: riskDescription,
-      recommendations: hasDepression
+      recommendations: riskLevel === "Alto"
         ? [
             "Busca ayuda de un profesional de salud mental de inmediato",
             "Contacta el centro de bienestar estudiantil de tu institución",
-            "Considera hablar con un psicólogo o psiquiatra",
-            "Mantente en contacto cercano con tu red de apoyo",
-            "Si tienes pensamientos suicidas, contacta una línea de crisis inmediatamente",
-            "No ignores estos síntomas, la depresión es tratable con ayuda profesional"
+            "Manténte en contacto cercano con tu red de apoyo",
+            "Si tienes pensamientos suicidas, contacta una línea de crisis inmediatamente"
+          ]
+        : riskLevel === "Medio"
+        ? [
+            "Conversa con MIA para obtener apoyo personalizado",
+            "Mantente atento a cambios en tu estado de ánimo",
+            "Practica técnicas de manejo del estrés y mindfulness",
+            "Mantén rutinas saludables de sueño y ejercicio",
+            "No dudes en buscar ayuda profesional si los síntomas empeoran"
           ]
         : [
-            "Mantén rutinas saludables de sueño y ejercicio",
+            "Recuerda que puedes apoyarte en MIA cuando sea lo desees",
             "Continúa conectando con amigos y familia",
             "Practica técnicas de mindfulness y manejo del estrés",
-            "Mantente atento a cambios en tu estado de ánimo",
+            "Manténte atento a cambios en tu estado de ánimo",
             "Considera recursos preventivos de bienestar estudiantil",
             "Si notas cambios en tu bienestar, no dudes en buscar ayuda"
           ]
@@ -329,6 +339,10 @@ export const Evaluation = () => {
     navigate("/professionals");
   };
 
+  const handleGoToChat = () => {
+    navigate("/chat");
+  };
+
   if (currentStep === "analyzing") {
     return (
       <div className="max-w-2xl mx-auto p-4 min-h-[calc(100vh-200px)] flex items-center justify-center">
@@ -392,10 +406,16 @@ export const Evaluation = () => {
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {depressionResult.hasDepression && (
+            {depressionResult.riskLevel === "Alto" && (
               <Button onClick={handleGoToProfessionals} className="btn-calm">
-                <ArrowRight className="w-4 h-4 mr-2" />
+                <Users className="w-4 h-4 mr-2" />
                 Ver Profesionales Disponibles
+              </Button>
+            )}
+            {depressionResult.riskLevel === "Medio" && (
+              <Button onClick={handleGoToChat} className="btn-calm">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Hablar con MIA
               </Button>
             )}
             <Button onClick={handleRestart} variant="outline" className="btn-gentle">

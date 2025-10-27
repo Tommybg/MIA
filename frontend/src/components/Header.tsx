@@ -13,8 +13,9 @@ export const Header = () => {
   };
 
   const navigation = [
-    { name: "Habla con MIA", href: "/" },
+    { name: "Inicio", href: "/" },
     { name: "Evaluación", href: "/evaluation" },
+    { name: "Habla con MIA", href: "/chat" },
     { name: "Profesionales", href: "/professionals" },
   ];
 
