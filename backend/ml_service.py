@@ -88,13 +88,13 @@ def predict_depression(user_data: Dict) -> Dict:
 
 		if proba >= 0.7:
 			risk_level = "Alto"
-			risk_description = "HRiesgo Alto detectado. Porfavor considere acudir a ayuda profesional."
+			risk_description = "Riesgo Alto detectado. Por favor considere acudir a ayuda profesional de inmediato."
 		elif proba >= 0.4:
 			risk_level = "Medio"
-			risk_description = "Riesgo Moderado. Te recomendamos monitorear tu salud mental."
+			risk_description = "Riesgo Moderado detectado. Te recomendamos conversar con MIA para obtener apoyo."
 		else:
 			risk_level = "Bajo"
-			risk_description = "Riesgo Bajo detectado. Continua con tus hábitos, sanos, que bien."
+			risk_description = "Riesgo Bajo detectado. Continúa con tus hábitos saludables, MIA esta aqui para escucharte cuando lo desees."
 
 		return {
 			'prediction': int(pred),
